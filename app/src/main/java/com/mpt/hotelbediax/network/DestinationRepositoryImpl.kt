@@ -3,8 +3,9 @@ package com.mpt.hotelbediax.network
 import com.mpt.hotelbediax.models.Destination
 import com.mpt.hotelbediax.models.DestinationResponse
 import retrofit2.Response
+import javax.inject.Inject
 
-class DestinationRepositoryImpl(private val apiService: ApiService) : DestinationRepository {
+class DestinationRepositoryImpl @Inject constructor(private val apiService: ApiService) : DestinationRepository {
 
     override suspend fun getAllDestinations(): DestinationResponse {
         val response = apiService.getAllDestinations()
