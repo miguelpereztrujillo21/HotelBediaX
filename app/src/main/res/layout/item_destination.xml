@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/item_destination_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            tools:text="Madrid" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="textEnd"
+            tools:text="07/08/24 last modified"
+            android:layout_weight="0.5"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/item_destination_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="City" />
+
+    <TextView
+        android:id="@+id/item_destination_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="@string/lorem_150c" />
+
+</LinearLayout>
