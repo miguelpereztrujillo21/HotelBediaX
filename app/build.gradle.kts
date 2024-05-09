@@ -6,6 +6,7 @@ plugins {
 android {
     namespace = "com.mpt.hotelbediax"
     compileSdk = 34
+    dataBinding.enable = true
 
     defaultConfig {
         applicationId = "com.mpt.hotelbediax"
