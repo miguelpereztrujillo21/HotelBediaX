@@ -14,6 +14,6 @@ interface DestinationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDestination(destination: Destination)
 
-    @Query("DELETE FROM destination")
-    suspend fun deleteAllDestinations()
+    @Query("DELETE FROM destination WHERE id = :id")
+    suspend fun deleteDestination(id: Int)
 }
