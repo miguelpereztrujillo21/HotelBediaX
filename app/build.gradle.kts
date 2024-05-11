@@ -74,6 +74,10 @@ dependencies {
     //Dagger Hilt
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)
+    //Room
+    implementation(libs.room)
+    implementation(libs.roomktx)
+    kapt(libs.roomCompiler)
 
 }
 kapt {

@@ -1,12 +1,15 @@
 package com.mpt.hotelbediax.models
 
-import java.util.Date
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
+@Entity(tableName = "destination")
 data class Destination(
-    var id: Int,
-    var name: String,
-    var description: String,
-    var countryCode: String,
-    var type: String,
-    var lastModify: String
+    @PrimaryKey(autoGenerate = true)
+    val id: Int,
+    val name: String,
+    val description: String,
+    val countryCode: String,
+    val type: String,
+    val lastModify: String
 )
