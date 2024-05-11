@@ -1,9 +1,13 @@
 <resources>
     //Botton Navigation
     <string name="app_name">HotelBediaX</string>
-    <string name="title_destinations">Destinations</string>
+
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+
+    //Home
+    <string name="title_destinations">Destinations</string>
+    <string name="search_by_name">Search by name</string>
 
     //Lorem
     <string name="lorem_150c">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus faucibus neque at odio tincidunt, vitae faucibus nunc facilisis. Ut sit amet sodales odio, nec luctus purus. Donec non leo et turpis tristique semper.</string>

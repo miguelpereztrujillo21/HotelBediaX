@@ -13,11 +13,15 @@
         <TextView
             android:id="@+id/item_destination_name"
             android:layout_width="0dp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="16sp"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             tools:text="Madrid" />
 
         <TextView
+            android:id="@+id/item_destination_last_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textAlignment="textEnd"
@@ -34,8 +38,14 @@
 
     <TextView
         android:id="@+id/item_destination_desc"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="@string/lorem_150c" />
 
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"/>
 </LinearLayout>

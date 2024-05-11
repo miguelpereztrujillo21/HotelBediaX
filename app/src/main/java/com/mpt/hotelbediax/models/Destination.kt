@@ -8,5 +8,5 @@ data class Destination(
     var description: String,
     var countryCode: String,
     var type: String,
-    var lastModify: Date
+    var lastModify: String
 )
