@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.mpt.hotelbediax.adapters.DestinationAdapter
 import com.mpt.hotelbediax.databinding.FragmentHomeBinding
+import com.mpt.hotelbediax.models.Destination
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -42,7 +43,9 @@ class HomeFragment : Fragment() {
     private fun seUpRecyclerView() {
         destinationAdapter =
             DestinationAdapter(requireContext(), object : DestinationAdapter.ClickListener {
-                override fun onClick(position: Int) {}
+                override fun onClick(destination: Destination) {
+                    homeViewModel.deleteDestination(destination)
+                }
             })
         binding.homeRecycler.adapter = destinationAdapter
     }

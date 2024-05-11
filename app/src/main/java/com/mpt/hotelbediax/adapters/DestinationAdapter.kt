@@ -2,6 +2,7 @@ package com.mpt.hotelbediax.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -31,13 +32,23 @@ class DestinationAdapter(private val context: Context, private val clickListener
             item: Destination,
             clickListener: ClickListener
         ) {
-            binding.itemDestinationName.text = item.name
-            binding.itemDestinationDesc.text = item.description
-            binding.itemDestinationType.text = item.type
-            binding.itemDestinationLastDate.text = item.lastModify
-
-
-
+            binding.apply {
+                itemDestinationName.text = item.name
+                itemDestinationDesc.text = item.description
+                itemDestinationType.text = item.type
+                itemDestinationLastDate.text = item.lastModify
+                itemDestinationDesc.visibility = View.GONE
+                itemDestinationDeleteButton.visibility = View.GONE
+                itemDestinationContainer.setOnClickListener {
+                    itemDestinationDesc.visibility = itemDestinationDesc.visibility.let {
+                        if (it == View.VISIBLE) View.GONE else View.VISIBLE }
+                    itemDestinationDeleteButton.visibility = itemDestinationDeleteButton.visibility.let {
+                        if (it == View.VISIBLE) View.GONE else View.VISIBLE }
+                }
+                itemDestinationDeleteButton.setOnClickListener {
+                    clickListener.onClick(item)
+                }
+            }
         }
 
         companion object {
@@ -61,7 +72,7 @@ class DestinationAdapter(private val context: Context, private val clickListener
     }
 
     interface ClickListener {
-        fun onClick(position: Int)
+        fun onClick(destination: Destination)
     }
 
     fun getDestinationPosition(position: Int): Destination? {

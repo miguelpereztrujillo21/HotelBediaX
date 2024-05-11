@@ -33,6 +33,13 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
             }
         }
     }
+    fun deleteDestination(destination: Destination){
+        viewModelScope.launch {
+            destinationRepository.deleteById(destination.id)
+            destinationDao.deleteDestination(destination.id)
+            getDestinations()
+        }
+    }
     private fun syncDestinations() {
         viewModelScope.launch {
             try {

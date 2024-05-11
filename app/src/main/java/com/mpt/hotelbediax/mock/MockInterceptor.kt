@@ -2,13 +2,13 @@ package com.mpt.hotelbediax.mock
 
 import android.content.Context
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.mpt.hotelbediax.BuildConfig
 import com.mpt.hotelbediax.models.Destination
 import com.mpt.hotelbediax.models.DestinationResponse
 import okhttp3.Interceptor
 import okhttp3.MediaType
 import okhttp3.Protocol
+import okhttp3.Request
 import okhttp3.Response
 import okhttp3.ResponseBody
 import java.io.IOException
@@ -18,10 +18,11 @@ class MockInterceptor(private val context: Context) : Interceptor {
     private var destinations: MutableList<Destination>? = loadInitialDestinations()
     override fun intercept(chain: Interceptor.Chain): Response {
         if (BuildConfig.DEBUG) {
-            val uri = chain.request().url().uri().toString()
-            val json = when {
-                uri.contains("destinations") -> loadJsonFromAsset("mock_destinations")
-                else -> ""
+            val request = chain.request()
+            val json = if (request.url().uri().toString().contains("destinations")) {
+                destinationResponses(request)
+            } else {
+                ""
             }
 
             return Response.Builder()
@@ -44,10 +45,24 @@ class MockInterceptor(private val context: Context) : Interceptor {
 
     private fun loadInitialDestinations(): MutableList<Destination>? {
         val json = loadJsonFromAsset("mock_destinations")
-        val listType = object : TypeToken<List<Destination>>() {}.type
         return gson.fromJson(json, DestinationResponse::class.java).results?.toMutableList()
     }
 
+    private fun destinationResponses(request: Request): String {
+        val uri = request.url().uri().toString()
+        val method = request.method()
+        return when(method) {
+            "GET" -> gson.toJson(DestinationResponse().apply { results = destinations as ArrayList<Destination>? })
+            "DELETE" -> {
+                val id = "\\d+$".toRegex().find(uri)?.value?.toInt()
+                id?.let {
+                    destinations?.removeAll { it.id == id }
+                }
+                gson.toJson(DestinationResponse().apply { results = destinations as ArrayList<Destination>? })
+            }
+            else -> ""
+        }
+    }
     private fun loadJsonFromAsset(path: String): String {
         val json: String?
         try {

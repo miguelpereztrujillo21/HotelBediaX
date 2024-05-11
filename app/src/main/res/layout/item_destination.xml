@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_destination_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -8,6 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:orientation="horizontal">
 
         <TextView
@@ -15,10 +17,17 @@
             android:layout_width="0dp"
             android:textStyle="bold"
             android:textColor="@color/black"
-            android:textSize="16sp"
+            android:textSize="19sp"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             tools:text="Madrid" />
+
+        <TextView
+            android:id="@+id/item_destination_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            tools:text="City" />
 
         <TextView
             android:id="@+id/item_destination_last_date"
@@ -31,18 +40,23 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/item_destination_type"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="City" />
-
-    <TextView
         android:id="@+id/item_destination_desc"
         android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
         tools:text="@string/lorem_150c" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/item_destination_delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginHorizontal="10dp"
+        android:backgroundTint="@color/red"
+        android:drawableEnd="@drawable/ic_delete"
+        android:text="@string/delete_button"
+        android:textSize="12sp"
+        android:visibility="gone" />
 
     <View
         android:layout_width="match_parent"

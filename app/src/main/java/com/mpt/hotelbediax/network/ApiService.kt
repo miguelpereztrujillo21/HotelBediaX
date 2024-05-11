@@ -14,7 +14,7 @@ import retrofit2.http.Path
 interface ApiService {
     @GET("/destinations")
     suspend fun getAllDestinations(): Response<DestinationResponse>
-    @DELETE("/destinations")
+    @DELETE("/destinations/{id}")
     suspend fun  deleteById(@Path("id")id: Int):Response<Unit>
     @PUT("/destinations")
     suspend fun update(@Body destination: Destination): Response<Unit>

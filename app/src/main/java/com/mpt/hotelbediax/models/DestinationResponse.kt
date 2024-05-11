@@ -1,5 +1,5 @@
 package com.mpt.hotelbediax.models
 
-class DestinationResponse {
-    val results: ArrayList<Destination>? = null
+class DestinationResponse() {
+    var results: ArrayList<Destination>? = null
 }
