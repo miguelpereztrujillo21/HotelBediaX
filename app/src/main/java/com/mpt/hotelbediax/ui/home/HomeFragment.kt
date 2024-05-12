@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.mpt.hotelbediax.adapters.DestinationAdapter
 import com.mpt.hotelbediax.databinding.FragmentHomeBinding
+import com.mpt.hotelbediax.helpers.DestinationDialogFragment
 import com.mpt.hotelbediax.models.Destination
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,6 +29,7 @@ class HomeFragment : Fragment() {
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
         initObservers()
         initListeners()
         seUpRecyclerView()
@@ -47,6 +49,10 @@ class HomeFragment : Fragment() {
     private fun initListeners(){
         binding.homeSearchBar.doAfterTextChanged { text ->
             homeViewModel.updateFilterText(text.toString())
+        }
+        binding.homeAddButton.setOnClickListener {
+            val dialog = DestinationDialogFragment()
+            dialog.show(childFragmentManager, "DestinationDialogFragment")
         }
     }
 

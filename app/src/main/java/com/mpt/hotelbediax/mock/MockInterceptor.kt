@@ -11,7 +11,10 @@ import okhttp3.Protocol
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.ResponseBody
+import java.io.BufferedReader
 import java.io.IOException
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 
 class MockInterceptor(private val context: Context) : Interceptor {
     private val gson = Gson()
@@ -58,6 +61,15 @@ class MockInterceptor(private val context: Context) : Interceptor {
                 id?.let {
                     destinations?.removeAll { it.id == id }
                 }
+                gson.toJson(DestinationResponse().apply { results = destinations as ArrayList<Destination>? })
+            }
+            "POST" -> {
+                val requestBody = request.body()
+                val buffer = okio.Buffer()
+                requestBody?.writeTo(buffer)
+                val json = buffer.readUtf8()
+                val destination = gson.fromJson(json, Destination::class.java)
+                destinations?.add(destination)
                 gson.toJson(DestinationResponse().apply { results = destinations as ArrayList<Destination>? })
             }
             else -> ""

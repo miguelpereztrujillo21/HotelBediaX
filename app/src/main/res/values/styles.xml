@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CustomAlertDialog" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <item name="android:textAppearance">@style/CustomTitleTextAppearance</item>
+        <item name="buttonBarPositiveButtonStyle">@style/CustomAlertDialog.Button</item>
+        <item name="buttonBarNegativeButtonStyle">@style/CustomAlertDialog.Button</item>
+    </style>
+
+    <style name="CustomTitleTextAppearance" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="android:textSize">24sp</item>
+    </style>
+    <style name="CustomAlertDialog.Button" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/teal_200</item>
+    </style>
+</resources>
