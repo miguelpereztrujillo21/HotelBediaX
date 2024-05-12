@@ -58,7 +58,6 @@ class DestinationAdapter(private val context: Context, private val clickListener
                 return ViewHolder(binding)
             }
         }
-
     }
 
     class CountryDiffCallback : DiffUtil.ItemCallback<Destination>() {

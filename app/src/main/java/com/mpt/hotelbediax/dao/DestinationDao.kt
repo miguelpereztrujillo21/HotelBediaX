@@ -16,4 +16,6 @@ interface DestinationDao {
 
     @Query("DELETE FROM destination WHERE id = :id")
     suspend fun deleteDestination(id: Int)
+    @Query("SELECT * FROM destination WHERE name LIKE :name || '%'")
+    suspend fun getDestinationsByName(name: String): List<Destination>
 }

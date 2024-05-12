@@ -15,10 +15,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(private val destinationRepository:DestinationRepository,
     private val destinationDao: DestinationDao): ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
-    }
-    val text: LiveData<String> = _text
+    private val _filterText = MutableLiveData<String?>()
+    val filterText: LiveData<String?> get() = _filterText
 
     private val _destinations = MutableLiveData<List<Destination>>()
     val destinations: LiveData<List<Destination>> get() = _destinations
@@ -72,4 +70,15 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
             }
         }
     }
+
+    fun filterByDestinationName(name: String) {
+        viewModelScope.launch {
+            _destinations.postValue(destinationDao.getDestinationsByName(name))
+        }
+    }
+
+    fun updateFilterText(newText: String) {
+        _filterText.value = newText
+    }
+
 }

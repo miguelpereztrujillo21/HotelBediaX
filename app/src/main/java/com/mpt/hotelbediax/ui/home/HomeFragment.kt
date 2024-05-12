@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.mpt.hotelbediax.adapters.DestinationAdapter
@@ -28,6 +29,7 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
         initObservers()
+        initListeners()
         seUpRecyclerView()
         homeViewModel.getDestinations()
 
@@ -37,6 +39,14 @@ class HomeFragment : Fragment() {
     private fun initObservers() {
         homeViewModel.destinations.observe(viewLifecycleOwner) {
             destinationAdapter?.submitList(it)
+        }
+        homeViewModel.filterText.observe(viewLifecycleOwner) {
+            homeViewModel.filterByDestinationName(it ?: "")
+        }
+    }
+    private fun initListeners(){
+        binding.homeSearchBar.doAfterTextChanged { text ->
+            homeViewModel.updateFilterText(text.toString())
         }
     }
 
