@@ -15,7 +15,6 @@ class DestinationAdapter(private val context: Context, private val clickListener
         CountryDiffCallback()
     ) {
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder.from(parent)
     }

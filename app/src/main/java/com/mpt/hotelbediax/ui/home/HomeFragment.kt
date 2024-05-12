@@ -51,7 +51,11 @@ class HomeFragment : Fragment() {
             homeViewModel.updateFilterText(text.toString())
         }
         binding.homeAddButton.setOnClickListener {
-            val dialog = DestinationDialogFragment()
+            val dialog = DestinationDialogFragment(object : DestinationDialogFragment.OnAddClickListener {
+                override fun onAddClick(destination: Destination) {
+                    homeViewModel.addDestination(destination)
+                }
+            })
             dialog.show(childFragmentManager, "DestinationDialogFragment")
         }
     }

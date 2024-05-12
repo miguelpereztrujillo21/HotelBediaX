@@ -11,12 +11,15 @@ import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.mpt.hotelbediax.R
 import com.mpt.hotelbediax.databinding.DialogDestinationBinding
+import com.mpt.hotelbediax.models.Destination
 import java.util.Calendar
 
-class DestinationDialogFragment : DialogFragment() {
+class DestinationDialogFragment(private val clickListener: OnAddClickListener) : DialogFragment() {
 
     private var _binding: DialogDestinationBinding? = null
     private val binding get() = _binding!!
+
+
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         _binding = DialogDestinationBinding.inflate(layoutInflater)
@@ -43,7 +46,15 @@ class DestinationDialogFragment : DialogFragment() {
             .setView(binding.root)
             .setTitle("Add Destination")
             .setPositiveButton("Add") { _, _ ->
-                
+                val destination = Destination(
+                    id = 0,
+                    binding.dialogDestinationName.text.toString(),
+                    binding.dialogDestinationDescription.text.toString(),
+                    "",
+                    spinner.selectedItem.toString(),
+                    binding.dialogDatePicker.text.toString()
+                )
+                clickListener.onAddClick(destination)
             }
             .setNegativeButton("Cancel") { _, _ ->
                 // Handle the negative button action here
@@ -54,5 +65,8 @@ class DestinationDialogFragment : DialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+    interface OnAddClickListener {
+        fun onAddClick(destination: Destination)
     }
 }
