@@ -13,6 +13,7 @@ import com.mpt.hotelbediax.R
 import com.mpt.hotelbediax.databinding.DialogDestinationBinding
 import com.mpt.hotelbediax.models.Destination
 import java.util.Calendar
+import kotlin.random.Random
 
 class DestinationDialogFragment(private val clickListener: OnAddClickListener) : DialogFragment() {
 
@@ -47,12 +48,13 @@ class DestinationDialogFragment(private val clickListener: OnAddClickListener) :
             .setTitle("Add Destination")
             .setPositiveButton("Add") { _, _ ->
                 val destination = Destination(
-                    id = 0,
+                    id = generateTemporaryId(),
                     binding.dialogDestinationName.text.toString(),
                     binding.dialogDestinationDescription.text.toString(),
                     "",
                     spinner.selectedItem.toString(),
-                    binding.dialogDatePicker.text.toString()
+                    binding.dialogDatePicker.text.toString(),
+                    true
                 )
                 clickListener.onAddClick(destination)
             }
@@ -65,6 +67,9 @@ class DestinationDialogFragment(private val clickListener: OnAddClickListener) :
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+    private fun generateTemporaryId(): Int {
+        return Random.nextInt(Int.MAX_VALUE)
     }
     interface OnAddClickListener {
         fun onAddClick(destination: Destination)

@@ -11,5 +11,6 @@ data class Destination(
     val description: String,
     val countryCode: String,
     val type: String,
-    val lastModify: String
+    val lastModify: String,
+    var isSyncPending: Boolean = false
 )

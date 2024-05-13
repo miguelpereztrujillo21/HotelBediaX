@@ -1,6 +1,8 @@
 package com.mpt.hotelbediax.mock
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import com.google.gson.Gson
 import com.mpt.hotelbediax.BuildConfig
 import com.mpt.hotelbediax.models.Destination
@@ -20,29 +22,33 @@ class MockInterceptor(private val context: Context) : Interceptor {
     private val gson = Gson()
     private var destinations: MutableList<Destination>? = loadInitialDestinations()
     override fun intercept(chain: Interceptor.Chain): Response {
-        if (BuildConfig.DEBUG) {
-            val request = chain.request()
-            val json = if (request.url().uri().toString().contains("destinations")) {
-                destinationResponses(request)
-            } else {
-                ""
-            }
+        if (isNetworkAvailable(context)) {
+            if (BuildConfig.DEBUG) {
+                val request = chain.request()
+                val json = if (request.url().uri().toString().contains("destinations")) {
+                    destinationResponses(request)
+                } else {
+                    ""
+                }
 
-            return Response.Builder()
-                .code(200)
-                .message(json)
-                .request(chain.request())
-                .protocol(Protocol.HTTP_1_0)
-                .body(
-                    ResponseBody.create(
-                        MediaType.parse("application/json"),
-                        json.toByteArray()
+                return Response.Builder()
+                    .code(200)
+                    .message(json)
+                    .request(chain.request())
+                    .protocol(Protocol.HTTP_1_0)
+                    .body(
+                        ResponseBody.create(
+                            MediaType.parse("application/json"),
+                            json.toByteArray()
+                        )
                     )
-                )
-                .addHeader("content-type", "application/json")
-                .build()
+                    .addHeader("content-type", "application/json")
+                    .build()
+            } else {
+                return chain.proceed(chain.request())
+            }
         } else {
-            return chain.proceed(chain.request())
+            throw IOException("No Internet Connection")
         }
     }
 
@@ -89,5 +95,11 @@ class MockInterceptor(private val context: Context) : Interceptor {
             return ""
         }
         return json
+    }
+    private fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val networkCapabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
     }
 }

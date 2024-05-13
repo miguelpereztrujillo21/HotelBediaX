@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.mpt.hotelbediax.models.Destination
 
 @Dao
@@ -18,4 +19,6 @@ interface DestinationDao {
     suspend fun deleteDestination(id: Int)
     @Query("SELECT * FROM destination WHERE name LIKE :name || '%'")
     suspend fun getDestinationsByName(name: String): List<Destination>
+    @Update
+    suspend fun updateDestination(destination: Destination)
 }
