@@ -21,16 +21,7 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
     private val _destinations = MutableLiveData<List<Destination>>()
     val destinations: LiveData<List<Destination>> get() = _destinations
 
-    fun getDestinations(){
-        viewModelScope.launch {
-            try {
-                syncDestinations()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            _destinations.postValue(destinationDao.getAllDestinations())
-        }
-    }
+
     fun addDestination(destination: Destination){
         viewModelScope.launch {
             destinationDao.insertDestination(destination)
@@ -40,24 +31,31 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
                 destinationDao.updateDestination(destination)
             } catch (e: Exception) {
                 e.printStackTrace()
-                getDestinations()
+                syncDestinations()
             }
         }
     }
     fun deleteDestination(destination: Destination){
         viewModelScope.launch {
-            destinationRepository.deleteById(destination.id)
-            destinationDao.deleteDestination(destination.id)
-            getDestinations()
+            try {
+                destinationRepository.deleteById(destination.id)
+                destinationDao.deleteDestination(destination.id)
+                destination.isSyncPending = false
+            } catch (e: Exception) {
+                e.printStackTrace()
+                destination.isSyncPending = true
+                destination.isLocalDeleted = true
+                destinationDao.updateDestination(destination)
+            }finally {
+                _destinations.postValue(destinationDao.getAllDestinations())
+            }
         }
     }
-    private fun syncDestinations() {
+
+    fun syncDestinations() {
         viewModelScope.launch {
             try {
-                // Paso 1: Obtener datos del backend
                 val backendDestinations = destinationRepository.getAllDestinations().results
-
-                // Paso 2: Obtener datos de la base de datos local
                 val localDestinations = destinationDao.getAllDestinations()
 
                 // Paso 3: Comparar los datos
@@ -72,9 +70,14 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
                 val pendingSyncDestinations = localDestinations.filter { it.isSyncPending }
                 pendingSyncDestinations.forEach { destination ->
                     try {
-                        destinationRepository.create(destination)
-                        destination.isSyncPending = false
-                        destinationDao.updateDestination(destination)
+                        if (destination.isLocalDeleted) {
+                            destinationRepository.deleteById(destination.id)
+                            destinationDao.deleteDestination(destination.id)
+                        } else {
+                            destinationRepository.create(destination)
+                            destination.isSyncPending = false
+                            destinationDao.updateDestination(destination)
+                        }
                     } catch (e: Exception) {
                         destination.isSyncPending = true
                         e.printStackTrace()
@@ -82,16 +85,16 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
                 }
                 // Paso 5: Eliminar los destinos locales que no existen en el backend
                 val deletedDestinations = localDestinations.filter { localDestination ->
-                    backendDestinations?.none { it.id == localDestination.id && !it.isSyncPending }
+                    backendDestinations?.none { it.id == localDestination.id && it.isSyncPending }
                         ?: false
                 }
                 deletedDestinations.forEach { destination ->
                     destinationDao.deleteDestination(destination.id)
                 }
-                // Actualizar la lista de destinos en vivo con los datos más recientes
-                _destinations.postValue(destinationDao.getAllDestinations())
             } catch (e: Exception) {
                 e.printStackTrace()
+            }finally {
+                _destinations.postValue(destinationDao.getAllDestinations())
             }
         }
     }

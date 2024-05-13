@@ -33,14 +33,15 @@ class HomeFragment : Fragment() {
         initObservers()
         initListeners()
         seUpRecyclerView()
-        homeViewModel.getDestinations()
+        homeViewModel.syncDestinations()
 
         return root
     }
 
     private fun initObservers() {
-        homeViewModel.destinations.observe(viewLifecycleOwner) {
-            destinationAdapter?.submitList(it)
+        homeViewModel.destinations.observe(viewLifecycleOwner) { destinations ->
+            val visibleDestinations =  destinations.filter { !it.isLocalDeleted }
+            destinationAdapter?.submitList(visibleDestinations)
         }
         homeViewModel.filterText.observe(viewLifecycleOwner) {
             homeViewModel.filterByDestinationName(it ?: "")

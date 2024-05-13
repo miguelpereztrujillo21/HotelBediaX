@@ -9,6 +9,7 @@
     <string name="title_destinations">Destinations</string>
     <string name="search_by_name">Search by name</string>
     <string name="delete_button">DELETE</string>
+    <string name="edit_button">EDIT</string>
     <string name ="hint_destination_name">Destination Name</string>
     <string name ="hint_destination_desc">Destination description</string>
 
