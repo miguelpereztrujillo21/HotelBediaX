@@ -38,6 +38,7 @@ class DestinationAdapter(private val context: Context, private val clickListener
                 itemDestinationLastDate.text = item.lastModify
                 itemDestinationDesc.visibility = View.GONE
                 itemDestinationDeleteButton.visibility = View.GONE
+                itemDestinationEditButton.visibility = View.GONE
                 itemDestinationContainer.setOnClickListener {
                     itemDestinationDesc.visibility = itemDestinationDesc.visibility.let {
                         if (it == View.VISIBLE) View.GONE else View.VISIBLE }
