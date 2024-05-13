@@ -55,6 +55,22 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
         }
     }
 
+    fun updateDestination(destination: Destination){
+        viewModelScope.launch {
+            try {
+                destinationRepository.update(destination)
+                destination.isSyncPending = false
+                destinationDao.updateDestination(destination)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                destination.isSyncPending = true
+                destinationDao.updateDestination(destination)
+            }finally {
+                _destinations.postValue(destinationDao.getAllDestinations())
+            }
+        }
+    }
+
     fun syncDestinations() {
         viewModelScope.launch {
             try {

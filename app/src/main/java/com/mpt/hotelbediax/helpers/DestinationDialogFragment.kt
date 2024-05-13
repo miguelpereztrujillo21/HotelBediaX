@@ -20,15 +20,28 @@ class DestinationDialogFragment(private val clickListener: OnAddClickListener) :
     private var _binding: DialogDestinationBinding? = null
     private val binding get() = _binding!!
 
+    private var destination: Destination? = null
+
+    fun setDestination(destination: Destination) {
+        this.destination = destination
+    }
+
 
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         _binding = DialogDestinationBinding.inflate(layoutInflater)
-
         val spinner: Spinner = binding.dialogSpinner
         val options = arrayOf("City", "Country")
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item,options)
         spinner.adapter = adapter
+
+        destination?.let {
+            binding.dialogDestinationName.setText(it.name)
+            binding.dialogDestinationDescription.setText(it.description)
+            binding.dialogDatePicker.setText(it.lastModify)
+            val spinnerPosition = adapter.getPosition(it.type)
+            spinner.setSelection(spinnerPosition)
+        }
 
         val datePickerEditText: EditText = binding.dialogDatePicker
         datePickerEditText.setOnClickListener {

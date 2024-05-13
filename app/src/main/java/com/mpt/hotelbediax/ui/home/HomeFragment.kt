@@ -68,7 +68,13 @@ class HomeFragment : Fragment() {
                     homeViewModel.deleteDestination(destination)
                 }
                 override fun onClickEdit(destination: Destination) {
-                 
+                    val dialog = DestinationDialogFragment(object : DestinationDialogFragment.OnAddClickListener {
+                        override fun onAddClick(destination: Destination) {
+                            homeViewModel.updateDestination(destination)
+                        }
+                    })
+                    dialog.show(childFragmentManager, "DestinationDialogFragment")
+                    dialog.setDestination(destination)
                 }
             })
         binding.homeRecycler.adapter = destinationAdapter
