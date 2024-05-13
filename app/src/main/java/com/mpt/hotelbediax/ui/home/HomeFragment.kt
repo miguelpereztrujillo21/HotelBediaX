@@ -33,7 +33,7 @@ class HomeFragment : Fragment() {
         initObservers()
         initListeners()
         seUpRecyclerView()
-        homeViewModel.syncDestinations()
+
 
         return root
     }

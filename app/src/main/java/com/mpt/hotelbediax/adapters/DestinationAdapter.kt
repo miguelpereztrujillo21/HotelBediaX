@@ -43,6 +43,8 @@ class DestinationAdapter(private val context: Context, private val clickListener
                         if (it == View.VISIBLE) View.GONE else View.VISIBLE }
                     itemDestinationDeleteButton.visibility = itemDestinationDeleteButton.visibility.let {
                         if (it == View.VISIBLE) View.GONE else View.VISIBLE }
+                    itemDestinationEditButton.visibility = itemDestinationEditButton.visibility.let {
+                        if (it == View.VISIBLE) View.GONE else View.VISIBLE }
                 }
                 itemDestinationDeleteButton.setOnClickListener {
                     clickListener.onClick(item)

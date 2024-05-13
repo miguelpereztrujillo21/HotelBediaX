@@ -1,5 +1,6 @@
 package com.mpt.hotelbediax.ui.home
 
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,7 +22,9 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
     private val _destinations = MutableLiveData<List<Destination>>()
     val destinations: LiveData<List<Destination>> get() = _destinations
 
-
+    init {
+        syncDestinations()
+    }
     fun addDestination(destination: Destination){
         viewModelScope.launch {
             destinationDao.insertDestination(destination)
@@ -85,7 +88,7 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
                 }
                 // Paso 5: Eliminar los destinos locales que no existen en el backend
                 val deletedDestinations = localDestinations.filter { localDestination ->
-                    backendDestinations?.none { it.id == localDestination.id && it.isSyncPending }
+                    backendDestinations?.none { it.id == localDestination.id && !localDestination.isSyncPending }
                         ?: false
                 }
                 deletedDestinations.forEach { destination ->
