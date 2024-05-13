@@ -78,6 +78,16 @@ class MockInterceptor(private val context: Context) : Interceptor {
                 destinations?.add(destination)
                 gson.toJson(DestinationResponse().apply { results = destinations as ArrayList<Destination>? })
             }
+            "PUT"->{
+                val requestBody = request.body()
+                val buffer = okio.Buffer()
+                requestBody?.writeTo(buffer)
+                val json = buffer.readUtf8()
+                val destination = gson.fromJson(json, Destination::class.java)
+                destinations?.removeAll { it.id == destination.id }
+                destinations?.add(destination)
+                gson.toJson(DestinationResponse().apply { results = destinations as ArrayList<Destination>? })
+            }
             else -> ""
         }
     }
