@@ -48,7 +48,10 @@ class DestinationAdapter(private val context: Context, private val clickListener
                         if (it == View.VISIBLE) View.GONE else View.VISIBLE }
                 }
                 itemDestinationDeleteButton.setOnClickListener {
-                    clickListener.onClick(item)
+                    clickListener.onClickDelete(item)
+                }
+                itemDestinationEditButton.setOnClickListener {
+                    clickListener.onClickEdit(item)
                 }
             }
         }
@@ -73,7 +76,8 @@ class DestinationAdapter(private val context: Context, private val clickListener
     }
 
     interface ClickListener {
-        fun onClick(destination: Destination)
+        fun onClickDelete(destination: Destination)
+        fun onClickEdit(destination: Destination)
     }
 
     fun getDestinationPosition(position: Int): Destination? {

@@ -64,8 +64,11 @@ class HomeFragment : Fragment() {
     private fun seUpRecyclerView() {
         destinationAdapter =
             DestinationAdapter(requireContext(), object : DestinationAdapter.ClickListener {
-                override fun onClick(destination: Destination) {
+                override fun onClickDelete(destination: Destination) {
                     homeViewModel.deleteDestination(destination)
+                }
+                override fun onClickEdit(destination: Destination) {
+                 
                 }
             })
         binding.homeRecycler.adapter = destinationAdapter
