@@ -56,7 +56,7 @@ class HomeFragment : Fragment() {
                 override fun onAddClick(destination: Destination) {
                     homeViewModel.addDestination(destination)
                 }
-            })
+            },false)
             dialog.show(childFragmentManager, "DestinationDialogFragment")
         }
     }
@@ -72,7 +72,7 @@ class HomeFragment : Fragment() {
                         override fun onAddClick(destination: Destination) {
                             homeViewModel.updateDestination(destination)
                         }
-                    })
+                    }, true)
                     dialog.show(childFragmentManager, "DestinationDialogFragment")
                     dialog.setDestination(destination)
                 }

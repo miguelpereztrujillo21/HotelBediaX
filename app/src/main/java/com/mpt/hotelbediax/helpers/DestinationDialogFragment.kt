@@ -15,7 +15,7 @@ import com.mpt.hotelbediax.models.Destination
 import java.util.Calendar
 import kotlin.random.Random
 
-class DestinationDialogFragment(private val clickListener: OnAddClickListener) : DialogFragment() {
+class DestinationDialogFragment(private val clickListener: OnAddClickListener, private val isEdit: Boolean) : DialogFragment() {
 
     private var _binding: DialogDestinationBinding? = null
     private val binding get() = _binding!!
@@ -25,8 +25,6 @@ class DestinationDialogFragment(private val clickListener: OnAddClickListener) :
     fun setDestination(destination: Destination) {
         this.destination = destination
     }
-
-
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         _binding = DialogDestinationBinding.inflate(layoutInflater)
@@ -58,8 +56,8 @@ class DestinationDialogFragment(private val clickListener: OnAddClickListener) :
 
         return MaterialAlertDialogBuilder(requireContext(), R.style.CustomAlertDialog)
             .setView(binding.root)
-            .setTitle("Add Destination")
-            .setPositiveButton("Add") { _, _ ->
+            .setTitle(if(isEdit) getString(R.string.edit_button) else getString(R.string.dialog_add_button))
+            .setPositiveButton(if (isEdit)getString(R.string.edit_button)else getString(R.string.dialog_add_button)) { _, _ ->
                 val destination = Destination(
                     id = generateTemporaryId(),
                     binding.dialogDestinationName.text.toString(),
