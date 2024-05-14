@@ -8,6 +8,7 @@
         android:id="@+id/dialog_destination_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text=""
         android:hint="@string/hint_destination_name"/>
     <Spinner
         android:id="@+id/dialog_spinner"

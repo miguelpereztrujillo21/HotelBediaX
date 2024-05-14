@@ -43,7 +43,6 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
             try {
                 destinationRepository.deleteById(destination.id)
                 destinationDao.deleteDestination(destination.id)
-                destination.isSyncPending = false
             } catch (e: Exception) {
                 e.printStackTrace()
                 destination.isSyncPending = true
@@ -60,18 +59,17 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
             try {
                 destinationRepository.update(destination)
                 destination.isSyncPending = false
-                destinationDao.updateDestination(destination)
             } catch (e: Exception) {
                 e.printStackTrace()
                 destination.isSyncPending = true
-                destinationDao.updateDestination(destination)
             }finally {
+                destinationDao.updateDestination(destination)
                 _destinations.postValue(destinationDao.getAllDestinations())
             }
         }
     }
 
-    fun syncDestinations() {
+    private fun syncDestinations() {
         viewModelScope.launch {
             try {
                 val backendDestinations = destinationRepository.getAllDestinations().results

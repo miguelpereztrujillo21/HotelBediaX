@@ -34,7 +34,6 @@ class HomeFragment : Fragment() {
         initListeners()
         seUpRecyclerView()
 
-
         return root
     }
 

@@ -59,7 +59,7 @@ class DestinationDialogFragment(private val clickListener: OnAddClickListener, p
             .setTitle(if(isEdit) getString(R.string.edit_button) else getString(R.string.dialog_add_button))
             .setPositiveButton(if (isEdit)getString(R.string.edit_button)else getString(R.string.dialog_add_button)) { _, _ ->
                 val destination = Destination(
-                    id = generateTemporaryId(),
+                    destination?.id ?: generateTemporaryId(),
                     binding.dialogDestinationName.text.toString(),
                     binding.dialogDestinationDescription.text.toString(),
                     "",
@@ -68,6 +68,7 @@ class DestinationDialogFragment(private val clickListener: OnAddClickListener, p
                     true
                 )
                 clickListener.onAddClick(destination)
+                dismiss()
             }
             .setNegativeButton("Cancel") { _, _ ->
                 // Handle the negative button action here
