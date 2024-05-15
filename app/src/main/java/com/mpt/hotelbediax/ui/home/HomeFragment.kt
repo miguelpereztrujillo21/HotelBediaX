@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.mpt.hotelbediax.adapters.DestinationAdapter
 import com.mpt.hotelbediax.databinding.FragmentHomeBinding
 import com.mpt.hotelbediax.helpers.DestinationDialogFragment
@@ -76,6 +78,15 @@ class HomeFragment : Fragment() {
                     dialog.setDestination(destination)
                 }
             })
+        binding.homeRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                if (!homeViewModel.isLoading && layoutManager.findLastVisibleItemPosition() >= layoutManager.itemCount - 10) {
+                    homeViewModel.loadNextPage()
+                }
+            }
+        })
         binding.homeRecycler.adapter = destinationAdapter
     }
     override fun onDestroyView() {

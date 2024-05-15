@@ -11,6 +11,8 @@ import com.mpt.hotelbediax.models.Destination
 interface DestinationDao {
     @Query("SELECT * FROM destination")
     suspend fun getAllDestinations(): List<Destination>
+    @Query("SELECT * FROM destination LIMIT :limit OFFSET :offset")
+    suspend fun getDestinationsInRange(offset: Int, limit: Int): List<Destination>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDestination(destination: Destination)

@@ -1,6 +1,5 @@
 package com.mpt.hotelbediax.ui.home
 
-import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,6 +20,9 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
 
     private val _destinations = MutableLiveData<List<Destination>>()
     val destinations: LiveData<List<Destination>> get() = _destinations
+    private var currentPage = 0
+    private val itemsPerPage = 20
+    var isLoading = false
 
     init {
         syncDestinations()
@@ -35,6 +37,8 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
             } catch (e: Exception) {
                 e.printStackTrace()
                 syncDestinations()
+            } finally {
+                _destinations.value = _destinations.value?.plus(destination)
             }
         }
     }
@@ -49,7 +53,7 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
                 destination.isLocalDeleted = true
                 destinationDao.updateDestination(destination)
             }finally {
-                _destinations.postValue(destinationDao.getAllDestinations())
+                _destinations.value = _destinations.value?.filter { it.id != destination.id }
             }
         }
     }
@@ -64,7 +68,12 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
                 destination.isSyncPending = true
             }finally {
                 destinationDao.updateDestination(destination)
-                _destinations.postValue(destinationDao.getAllDestinations())
+                val index = _destinations.value?.indexOfFirst { it.id == destination.id }
+                // Reemplaza el destino en ese índice con el destino actualizado
+                if (index != null && index >= 0) {
+                    _destinations.value =
+                        _destinations.value?.toMutableList().apply { this?.set(index, destination) }
+                }
             }
         }
     }
@@ -75,11 +84,11 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
                 val backendDestinations = destinationRepository.getAllDestinations().results
                 val localDestinations = destinationDao.getAllDestinations()
 
-                // Paso 3: Comparar los datos
+                // Comparar los datos de back con los locales
                 val newDestinations = backendDestinations?.filter { backendDestination ->
                     localDestinations.none { it.id == backendDestination.id}
                 }
-                // Paso 4: Actualizar la base de datos local si hay nuevos destinos
+                // Actualizar la base de datos local si hay nuevos destinos
                 newDestinations?.forEach { destination ->
                     destinationDao.insertDestination(destination)
                 }
@@ -111,7 +120,12 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
             } catch (e: Exception) {
                 e.printStackTrace()
             }finally {
-                _destinations.postValue(destinationDao.getAllDestinations())
+                _destinations.postValue(
+                    destinationDao.getDestinationsInRange(
+                        currentPage * itemsPerPage,
+                        itemsPerPage
+                    )
+                )
             }
         }
     }
@@ -124,6 +138,19 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
 
     fun updateFilterText(newText: String) {
         _filterText.value = newText
+    }
+
+    fun loadNextPage() {
+        if (!isLoading) {
+            isLoading = true
+            viewModelScope.launch {
+                currentPage++
+                val pageItems =
+                    destinationDao.getDestinationsInRange(currentPage * itemsPerPage, itemsPerPage)
+                _destinations.value = _destinations.value?.plus(pageItems)
+                isLoading = false
+            }
+        }
     }
 
 }
