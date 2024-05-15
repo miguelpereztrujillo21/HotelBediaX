@@ -1,5 +1,6 @@
 package com.mpt.hotelbediax.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -11,6 +12,8 @@ import com.mpt.hotelbediax.models.Destination
 interface DestinationDao {
     @Query("SELECT * FROM destination")
     suspend fun getAllDestinations(): List<Destination>
+    @Query("SELECT * FROM destination ORDER BY id ASC LIMIT :size OFFSET :start")
+    fun getDestinationsPaged(start: Int, size: Int): List<Destination>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDestination(destination: Destination)
