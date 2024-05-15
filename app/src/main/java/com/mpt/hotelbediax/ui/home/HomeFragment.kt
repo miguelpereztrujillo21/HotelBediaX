@@ -54,7 +54,7 @@ class HomeFragment : Fragment() {
         }
         binding.homeAddButton.setOnClickListener {
             val dialog = DestinationDialogFragment(object : DestinationDialogFragment.OnAddClickListener {
-                override fun onAddClick(destination: Destination) {
+                override fun onPositiveClick(destination: Destination) {
                     homeViewModel.addDestination(destination)
                 }
             },false)
@@ -70,7 +70,7 @@ class HomeFragment : Fragment() {
                 }
                 override fun onClickEdit(destination: Destination) {
                     val dialog = DestinationDialogFragment(object : DestinationDialogFragment.OnAddClickListener {
-                        override fun onAddClick(destination: Destination) {
+                        override fun onPositiveClick(destination: Destination) {
                             homeViewModel.updateDestination(destination)
                         }
                     }, true)

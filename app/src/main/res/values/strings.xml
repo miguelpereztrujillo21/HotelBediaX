@@ -12,9 +12,11 @@
     <string name="edit_button">EDIT</string>
     <string name ="hint_destination_name">Destination Name</string>
     <string name ="hint_destination_desc">Destination description</string>
+    <string name ="hint_date">Select date</string>
     <string name ="dialog_title_edit_destination">Edit Destination</string>
     <string name ="dialog_title_add_destination">Add Destination</string>
     <string name ="dialog_add_button">ADD</string>
+    <string name ="error_empty_field">Error this field cannot be empty</string>
 
     //Lorem
     <string name="lorem_150c">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus faucibus neque at odio tincidunt, vitae faucibus nunc facilisis. Ut sit amet sodales odio, nec luctus purus. Donec non leo et turpis tristique semper.</string>
