@@ -78,6 +78,11 @@ dependencies {
     implementation(libs.room)
     implementation(libs.roomktx)
     kapt(libs.roomCompiler)
+    //Coroutines
+    implementation(libs.coroutines)
+    implementation(libs.coroutinesCore)
+    //Paging
+    implementation(libs.paging )
 
 }
 kapt {
