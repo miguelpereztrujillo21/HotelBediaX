@@ -7,11 +7,14 @@ import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.mpt.hotelbediax.adapters.DestinationAdapter
 import com.mpt.hotelbediax.databinding.FragmentHomeBinding
 import com.mpt.hotelbediax.helpers.DestinationDialogFragment
 import com.mpt.hotelbediax.models.Destination
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -38,9 +41,14 @@ class HomeFragment : Fragment() {
     }
 
     private fun initObservers() {
-        homeViewModel.destinations.observe(viewLifecycleOwner) { destinations ->
+/*        homeViewModel.destinations.observe(viewLifecycleOwner) { destinations ->
             val visibleDestinations =  destinations.filter { !it.isLocalDeleted }
             destinationAdapter?.submitList(visibleDestinations)
+        }*/
+        homeViewModel.destinationsPaged.observe(viewLifecycleOwner) {
+            lifecycleScope.launch(Dispatchers.Main) {
+                destinationAdapter?.submitData(it)
+            }
         }
         homeViewModel.filterText.observe(viewLifecycleOwner) {
             homeViewModel.filterByDestinationName(it ?: "")

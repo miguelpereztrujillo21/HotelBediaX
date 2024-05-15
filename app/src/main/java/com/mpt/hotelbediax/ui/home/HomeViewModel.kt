@@ -4,10 +4,18 @@ import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.paging.InvalidatingPagingSourceFactory
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.filter
 import com.mpt.hotelbediax.dao.DestinationDao
 import com.mpt.hotelbediax.models.Destination
 import com.mpt.hotelbediax.network.DestinationRepository
+import com.mpt.hotelbediax.pagin.DestinationPagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,7 +30,18 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
     private val _destinations = MutableLiveData<List<Destination>>()
     val destinations: LiveData<List<Destination>> get() = _destinations
 
-    init {
+    private val pagingSourceFactory = InvalidatingPagingSourceFactory { DestinationPagingSource(destinationDao) }
+
+    val destinationsPaged: LiveData<PagingData<Destination>> = Pager(
+        config = PagingConfig(
+            pageSize = 20,  // Define el tamaño de página
+            enablePlaceholders = true
+        ),
+        pagingSourceFactory = pagingSourceFactory
+    ).flow.cachedIn(viewModelScope).asLiveData()
+
+
+  init {
         syncDestinations()
     }
     fun addDestination(destination: Destination){
@@ -38,6 +57,7 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
             }
         }
     }
+
     fun deleteDestination(destination: Destination){
         viewModelScope.launch {
             try {
@@ -49,7 +69,7 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
                 destination.isLocalDeleted = true
                 destinationDao.updateDestination(destination)
             }finally {
-                _destinations.postValue(destinationDao.getAllDestinations())
+                pagingSourceFactory.invalidate()
             }
         }
     }
@@ -59,12 +79,12 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
             try {
                 destinationRepository.update(destination)
                 destination.isSyncPending = false
+                destinationDao.updateDestination(destination)
+                pagingSourceFactory.invalidate()
             } catch (e: Exception) {
                 e.printStackTrace()
                 destination.isSyncPending = true
             }finally {
-                destinationDao.updateDestination(destination)
-                _destinations.postValue(destinationDao.getAllDestinations())
             }
         }
     }

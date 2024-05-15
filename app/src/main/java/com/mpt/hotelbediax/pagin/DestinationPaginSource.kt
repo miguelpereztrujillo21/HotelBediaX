@@ -4,6 +4,8 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.mpt.hotelbediax.dao.DestinationDao
 import com.mpt.hotelbediax.models.Destination
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class DestinationPagingSource(
     private val destinationDao: DestinationDao
@@ -12,7 +14,9 @@ class DestinationPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Destination> {
         return try {
             val nextPageNumber = params.key ?: 0
-            val response = destinationDao.getDestinationsPaged(nextPageNumber * params.loadSize, params.loadSize)
+            val response = withContext(Dispatchers.IO) {
+                destinationDao.getDestinationsPaged(nextPageNumber * params.loadSize, params.loadSize)
+            }
             LoadResult.Page(
                 data = response,
                 prevKey = if (nextPageNumber > 0) nextPageNumber - 1 else null,
@@ -26,4 +30,5 @@ class DestinationPagingSource(
     override fun getRefreshKey(state: PagingState<Int, Destination>): Int? {
         return state.anchorPosition
     }
+
 }

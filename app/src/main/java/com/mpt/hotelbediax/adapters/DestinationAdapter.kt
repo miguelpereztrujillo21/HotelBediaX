@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -11,7 +12,7 @@ import com.mpt.hotelbediax.databinding.ItemDestinationBinding
 import com.mpt.hotelbediax.models.Destination
 
 class DestinationAdapter(private val context: Context, private val clickListener: ClickListener) :
-    ListAdapter<Destination, DestinationAdapter.ViewHolder>(
+    PagingDataAdapter<Destination, DestinationAdapter.ViewHolder>(
         CountryDiffCallback()
     ) {
 
@@ -20,7 +21,7 @@ class DestinationAdapter(private val context: Context, private val clickListener
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(context, getItem(position), clickListener)
+        getItem(position)?.let { holder.bind(context, it, clickListener) }
     }
 
     class ViewHolder private constructor(private val binding: ItemDestinationBinding) :
