@@ -11,16 +11,23 @@ import com.mpt.hotelbediax.models.Destination
 interface DestinationDao {
     @Query("SELECT * FROM destination")
     suspend fun getAllDestinations(): List<Destination>
+    
     @Query("SELECT * FROM destination LIMIT :limit OFFSET :offset")
     suspend fun getDestinationsInRange(offset: Int, limit: Int): List<Destination>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDestination(destination: Destination)
 
-    @Query("DELETE FROM destination WHERE id = :id")
-    suspend fun deleteDestination(id: Int)
-    @Query("SELECT * FROM destination WHERE name LIKE :name || '%'")
-    suspend fun getDestinationsByName(name: String): List<Destination>
     @Update
     suspend fun updateDestination(destination: Destination)
+
+    @Query("DELETE FROM destination WHERE id = :id")
+    suspend fun deleteDestination(id: Int)
+
+    @Query("SELECT * FROM destination WHERE name LIKE :name || '%'")
+    suspend fun getDestinationsByName(name: String): List<Destination>
+
+    @Query("SELECT * FROM Destination ORDER BY lastModify ASC")
+    fun getDestinationsOrderedByDate(): List<Destination>
+
 }
