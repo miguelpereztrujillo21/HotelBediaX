@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mpt.hotelbediax.dao.DestinationDao
+import com.mpt.hotelbediax.helpers.Constants
 import com.mpt.hotelbediax.models.Destination
 import com.mpt.hotelbediax.network.DestinationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,55 +28,9 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
     init {
         syncDestinations()
     }
-    fun addDestination(destination: Destination){
-        viewModelScope.launch {
-            destinationDao.insertDestination(destination)
-            try {
-                destinationRepository.create(destination)
-                destination.isSyncPending = false
-                destinationDao.updateDestination(destination)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                syncDestinations()
-            } finally {
-                _destinations.value = _destinations.value?.plus(destination)
-            }
-        }
-    }
-    fun deleteDestination(destination: Destination){
-        viewModelScope.launch {
-            try {
-                destinationRepository.deleteById(destination.id)
-                destinationDao.deleteDestination(destination.id)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                destination.isSyncPending = true
-                destination.isLocalDeleted = true
-                destinationDao.updateDestination(destination)
-            }finally {
-                _destinations.value = _destinations.value?.filter { it.id != destination.id }
-            }
-        }
-    }
 
-    fun updateDestination(destination: Destination){
-        viewModelScope.launch {
-            try {
-                destinationRepository.update(destination)
-                destination.isSyncPending = false
-            } catch (e: Exception) {
-                e.printStackTrace()
-                destination.isSyncPending = true
-            }finally {
-                destinationDao.updateDestination(destination)
-                val index = _destinations.value?.indexOfFirst { it.id == destination.id }
-                // Reemplaza el destino en ese índice con el destino actualizado
-                if (index != null && index >= 0) {
-                    _destinations.value =
-                        _destinations.value?.toMutableList().apply { this?.set(index, destination) }
-                }
-            }
-        }
+    fun updateFilterText(newText: String) {
+        _filterText.value = newText
     }
 
     private fun syncDestinations() {
@@ -117,18 +72,73 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
                 deletedDestinations.forEach { destination ->
                     destinationDao.deleteDestination(destination.id)
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }finally {
                 _destinations.postValue(
                     destinationDao.getDestinationsInRange(
                         currentPage * itemsPerPage,
                         itemsPerPage
                     )
                 )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }finally {
+
             }
         }
     }
+
+    fun addDestination(destination: Destination){
+        viewModelScope.launch {
+            destinationDao.insertDestination(destination)
+            try {
+                destinationRepository.create(destination)
+                destination.isSyncPending = false
+                destinationDao.updateDestination(destination)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                syncDestinations()
+            } finally {
+                _destinations.value = _destinations.value?.plus(destination)
+            }
+        }
+    }
+
+    fun deleteDestination(destination: Destination){
+        viewModelScope.launch {
+            try {
+                destinationRepository.deleteById(destination.id)
+                destinationDao.deleteDestination(destination.id)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                destination.isSyncPending = true
+                destination.isLocalDeleted = true
+                destinationDao.updateDestination(destination)
+            }finally {
+                _destinations.value = _destinations.value?.filter { it.id != destination.id }
+            }
+        }
+    }
+
+    fun updateDestination(destination: Destination){
+        viewModelScope.launch {
+            try {
+                destinationRepository.update(destination)
+                destination.isSyncPending = false
+            } catch (e: Exception) {
+                e.printStackTrace()
+                destination.isSyncPending = true
+            }finally {
+                destinationDao.updateDestination(destination)
+                val index = _destinations.value?.indexOfFirst { it.id == destination.id }
+                // Reemplaza el destino en ese índice con el destino actualizado
+                if (index != null && index >= 0) {
+                    _destinations.value =
+                        _destinations.value?.toMutableList().apply { this?.set(index, destination) }
+                }
+            }
+        }
+    }
+
+
 
     fun filterByDestinationName(name: String) {
         viewModelScope.launch {
@@ -136,9 +146,20 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
         }
     }
 
-    fun updateFilterText(newText: String) {
-        _filterText.value = newText
+    fun filterByDestinationType(type: String) {
+        viewModelScope.launch {
+            _destinations.value = destinationDao.getDestinationsByType(type)
+        }
     }
+    fun filterByDestinationDate(order: String) {
+        viewModelScope.launch {
+            if (order == Constants.ORDER_BY_DATE_ASC)
+                _destinations.postValue(destinationDao.getDestinationsOrderedByDateASC().toMutableList())
+            else if (order == Constants.ORDER_BY_DATE_DESC)
+                _destinations.postValue(destinationDao.getDestinationsOrderedByDateDESC().toMutableList())
+        }
+    }
+
 
     fun loadNextPage() {
         if (!isLoading) {

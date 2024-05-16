@@ -11,13 +11,12 @@ import com.mpt.hotelbediax.models.Destination
 interface DestinationDao {
     @Query("SELECT * FROM destination")
     suspend fun getAllDestinations(): List<Destination>
-    
+
     @Query("SELECT * FROM destination LIMIT :limit OFFSET :offset")
     suspend fun getDestinationsInRange(offset: Int, limit: Int): List<Destination>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDestination(destination: Destination)
-
     @Update
     suspend fun updateDestination(destination: Destination)
 
@@ -28,6 +27,10 @@ interface DestinationDao {
     suspend fun getDestinationsByName(name: String): List<Destination>
 
     @Query("SELECT * FROM Destination ORDER BY lastModify ASC")
-    fun getDestinationsOrderedByDate(): List<Destination>
+    suspend fun getDestinationsOrderedByDateASC(): List<Destination>
+    @Query("SELECT * FROM Destination ORDER BY lastModify DESC")
+    suspend fun getDestinationsOrderedByDateDESC(): List<Destination>
 
+    @Query("SELECT * FROM destination WHERE type = :type")
+    suspend fun getDestinationsByType(type: String): List<Destination>
 }

@@ -17,11 +17,11 @@
       "lastModify": "2024-05-09"
     },
     {
-      "id": 3,
-      "name": "Barcelona",
+      "id": 99,
+      "name": "Rusia",
       "description": "A vibrant city in Spain famous for its architecture, beaches, and nightlife.",
-      "countryCode": "ES",
-      "type": "City",
+      "countryCode": "RUS",
+      "type": "Country",
       "lastModify": "2024-05-09"
     },
     {

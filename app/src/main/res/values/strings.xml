@@ -17,6 +17,13 @@
     <string name ="dialog_title_add_destination">Add Destination</string>
     <string name ="dialog_add_button">ADD</string>
     <string name ="error_empty_field">Error this field cannot be empty</string>
+    <string name ="simple_city">City</string>
+    <string name ="simple_country">Country</string>
+    <string name = "simple_order_by_date_ASC">Date ASC</string>
+    <string name = "simple_order_by_date_DESC">Date DESC</string>
+    <string name = "simple_filter_by_date">Filter by date</string>
+    <string name = "simple_filter_by_type">Filter by type</string>
+    <string name = "simple_none">none</string>
 
     //Lorem
     <string name="lorem_150c">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus faucibus neque at odio tincidunt, vitae faucibus nunc facilisis. Ut sit amet sodales odio, nec luctus purus. Donec non leo et turpis tristique semper.</string>
