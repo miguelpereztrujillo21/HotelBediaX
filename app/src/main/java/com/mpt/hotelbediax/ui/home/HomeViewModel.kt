@@ -25,6 +25,8 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
     private val itemsPerPage = 20
     var isLoading = false
 
+
+
     init {
         syncDestinations()
     }
@@ -33,56 +35,70 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
         _filterText.value = newText
     }
 
-    private fun syncDestinations() {
+    fun syncDestinations() {
         viewModelScope.launch {
             try {
+                currentPage = 0
                 val backendDestinations = destinationRepository.getAllDestinations().results
                 val localDestinations = destinationDao.getAllDestinations()
 
-                // Comparar los datos de back con los locales
-                val newDestinations = backendDestinations?.filter { backendDestination ->
-                    localDestinations.none { it.id == backendDestination.id}
-                }
-                // Actualizar la base de datos local si hay nuevos destinos
-                newDestinations?.forEach { destination ->
-                    destinationDao.insertDestination(destination)
-                }
-                //Obtiene las no sincronizadas y los intenta sincronizar con back
-                val pendingSyncDestinations = localDestinations.filter { it.isSyncPending }
-                pendingSyncDestinations.forEach { destination ->
-                    try {
-                        if (destination.isLocalDeleted) {
-                            destinationRepository.deleteById(destination.id)
-                            destinationDao.deleteDestination(destination.id)
-                        } else {
-                            destinationRepository.create(destination)
-                            destination.isSyncPending = false
-                            destinationDao.updateDestination(destination)
-                        }
-                    } catch (e: Exception) {
-                        destination.isSyncPending = true
-                        e.printStackTrace()
-                    }
-                }
-                // Paso 5: Eliminar los destinos locales que no existen en el backend
-                val deletedDestinations = localDestinations.filter { localDestination ->
-                    backendDestinations?.none { it.id == localDestination.id && !localDestination.isSyncPending }
-                        ?: false
-                }
-                deletedDestinations.forEach { destination ->
-                    destinationDao.deleteDestination(destination.id)
-                }
+                syncNewDestinations(backendDestinations, localDestinations)
+                syncPendingDestinations(localDestinations)
+                deleteNonExistentDestinations(backendDestinations, localDestinations)
                 _destinations.postValue(
                     destinationDao.getDestinationsInRange(
                         currentPage * itemsPerPage,
                         itemsPerPage
                     )
                 )
+
             } catch (e: Exception) {
                 e.printStackTrace()
-            }finally {
-
             }
+        }
+    }
+
+     suspend fun syncNewDestinations(
+        backendDestinations: List<Destination>?,
+        localDestinations: List<Destination>
+    ) {
+        val newDestinations = backendDestinations?.filter { backendDestination ->
+            localDestinations.none { it.id == backendDestination.id }
+        }
+        newDestinations?.forEach { destination ->
+            destinationDao.insertDestination(destination)
+        }
+    }
+
+    private suspend fun syncPendingDestinations(localDestinations: List<Destination>) {
+        val pendingSyncDestinations = localDestinations.filter { it.isSyncPending }
+        pendingSyncDestinations.forEach { destination ->
+            try {
+                if (destination.isLocalDeleted) {
+                    destinationRepository.deleteById(destination.id)
+                    destinationDao.deleteDestination(destination.id)
+                } else {
+                    destinationRepository.create(destination)
+                    destination.isSyncPending = false
+                    destinationDao.updateDestination(destination)
+                }
+            } catch (e: Exception) {
+                destination.isSyncPending = true
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private suspend fun deleteNonExistentDestinations(
+        backendDestinations: List<Destination>?,
+        localDestinations: List<Destination>
+    ) {
+        val deletedDestinations = localDestinations.filter { localDestination ->
+            backendDestinations?.none { it.id == localDestination.id && !localDestination.isSyncPending }
+                ?: false
+        }
+        deletedDestinations.forEach { destination ->
+            destinationDao.deleteDestination(destination.id)
         }
     }
 
@@ -95,7 +111,6 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
                 destinationDao.updateDestination(destination)
             } catch (e: Exception) {
                 e.printStackTrace()
-                syncDestinations()
             } finally {
                 _destinations.value = _destinations.value?.plus(destination)
             }
@@ -129,7 +144,6 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
             }finally {
                 destinationDao.updateDestination(destination)
                 val index = _destinations.value?.indexOfFirst { it.id == destination.id }
-                // Reemplaza el destino en ese índice con el destino actualizado
                 if (index != null && index >= 0) {
                     _destinations.value =
                         _destinations.value?.toMutableList().apply { this?.set(index, destination) }
@@ -137,8 +151,6 @@ class HomeViewModel @Inject constructor(private val destinationRepository:Destin
             }
         }
     }
-
-
 
     fun filterByDestinationName(name: String) {
         viewModelScope.launch {

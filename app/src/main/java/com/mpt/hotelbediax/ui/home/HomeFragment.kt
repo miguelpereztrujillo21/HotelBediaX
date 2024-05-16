@@ -59,6 +59,14 @@ class HomeFragment : Fragment() {
     }
 
     private fun initListeners(){
+        binding.homeSwipeRefresh.setOnRefreshListener {
+
+            homeViewModel.syncDestinations()
+            resetFilters()
+
+            // Recuerda llamar a setRefreshing(false) para indicar que el gesto de actualización ha terminado.
+            binding.homeSwipeRefresh.isRefreshing = false
+        }
         binding.homeSearchBar.doAfterTextChanged { text ->
             homeViewModel.updateFilterText(text.toString())
         }
@@ -78,7 +86,6 @@ class HomeFragment : Fragment() {
                     position: Int,
                     id: Long
                 ) {
-
                     val selectedItem = parent.getItemAtPosition(position).toString()
                     if (selectedItem == Constants.TYPE_CITY) {
                         homeViewModel.filterByDestinationType(Constants.TYPE_CITY)
@@ -140,7 +147,7 @@ class HomeFragment : Fragment() {
 
     private fun seUpRecyclerView() {
         destinationAdapter =
-            DestinationAdapter(requireContext(), object : DestinationAdapter.ClickListener {
+            DestinationAdapter(object : DestinationAdapter.ClickListener {
                 override fun onClickDelete(destination: Destination) {
                     homeViewModel.deleteDestination(destination)
                 }
@@ -165,6 +172,12 @@ class HomeFragment : Fragment() {
             }
         })
         binding.homeRecycler.adapter = destinationAdapter
+    }
+
+    private fun resetFilters() {
+        binding.homeFilters.spinnerType.setSelection(0)
+        binding.homeFilters.spinnerData.setSelection(0)
+        homeViewModel.updateFilterText("")
     }
 
     fun filtersAreEmpty(): Boolean {

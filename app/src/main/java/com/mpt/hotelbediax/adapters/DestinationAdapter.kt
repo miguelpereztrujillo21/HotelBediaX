@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mpt.hotelbediax.databinding.ItemDestinationBinding
 import com.mpt.hotelbediax.models.Destination
 
-class DestinationAdapter(private val context: Context, private val clickListener: ClickListener) :
+class DestinationAdapter( private val clickListener: ClickListener) :
     ListAdapter<Destination, DestinationAdapter.ViewHolder>(
         CountryDiffCallback()
     ) {
@@ -20,14 +20,13 @@ class DestinationAdapter(private val context: Context, private val clickListener
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(context, getItem(position), clickListener)
+        holder.bind(getItem(position), clickListener)
     }
 
     class ViewHolder private constructor(private val binding: ItemDestinationBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
-            context: Context,
             item: Destination,
             clickListener: ClickListener
         ) {

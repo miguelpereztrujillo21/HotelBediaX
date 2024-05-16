@@ -78,7 +78,8 @@ dependencies {
     implementation(libs.room)
     implementation(libs.roomktx)
     kapt(libs.roomCompiler)
-
+    //Swipe Refresh Layout
+    implementation(libs.swipeRefreshLayout)
 }
 kapt {
     correctErrorTypes = true
